@@ -9,7 +9,6 @@ player.loops = 1;
 let hoverSwitch;
 let videoItemDom;
 let showTime;
-// parser.fillMode = 'Forward'
 
 const handleChangeSvga = (target) => {
     hoverSwitch = true;
@@ -18,36 +17,25 @@ const handleChangeSvga = (target) => {
         videoItemDom = videoItem;
         
         player.setVideoItem(videoItemDom);
-        player.clearsAfterStop = false;
+        player.clearsAfterStop = false; // 動畫結束後，SVGA不會消失
         if(reversePlaySvga.checked) {
             player.clearsAfterStop = true
-            player.startAnimation(true);
+            player.startAnimation(true); // 動畫反轉
             return
         }
-        player.startAnimation(); // player.startAnimation(true); 動畫反轉
-        // player.startAnimationWithRange({location: 0, length: 10}, false)
-        // player.stepToPercentage(30, true)
-        // console.log('videoItem.frames', videoItem.frames * 100 - 1000)
-        // player.startAnimationWithRange({location: 0, length: videoItemDom.frames - 1}, false)
+        player.startAnimation(); // 動畫開始
+
+        // 計算到第幾幀
         player.onFrame((time) => {
             showTime = time;
         });
         if (delayRemoveSvga.checked) {
             player.onFinished(() => {
                 setTimeout(() => {
-                    player.clear();
+                    player.clear(); // 移除SVGA
                 }, 3000);
             });
         }
-        // setTimeout(() => {
-        //     player.pauseAnimation();
-        // }, (videoItemDom.frames / videoItemDom.FPS) * 1000);
-
-        // if (delayRemoveSvga.checked) {
-        //     setTimeout(() => {
-        //         player.clear();
-        //     }, (videoItemDom.frames / videoItemDom.FPS) * 1000 + 3000);
-        // }
     });
 };
 
@@ -57,19 +45,10 @@ const handleHoverSvga = () => {
         player.startAnimationWithRange(
             { location: 0, length: showTime - 1 },
             true
-        );
-        player.clearsAfterStop = true;
+        ); // 範圍 {location 初始幀，length 結束幀}， true(動畫反轉)，false(動畫正轉)
+        player.clearsAfterStop = true; // 動畫結束後，SVGA消失
         hoverSwitch = false;
     }
-
-    // if (hoverSwitch && !delayRemoveSvga.checked) {
-    //     player.startAnimation(true);
-    //     player.clearsAfterStop = true
-    //     // setTimeout(() => {
-    //     //     player.pauseAnimation()
-    //     // },(videoItemDom.frames/videoItemDom.FPS) * 1000)
-    //     hoverSwitch = false;
-    // }
 };
 
 for (let i = 0; i < svgaButton.length; i++) {
